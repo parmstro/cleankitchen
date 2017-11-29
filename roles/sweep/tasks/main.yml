@@ -1,0 +1,77 @@
+---
+# Paul Armstrong
+# parmstro@redhat.com
+# Please see LICENSE for the applicable opensource license
+#
+# This play is designed to make your kids to sweep the kitchen floor
+# The play can be combined with take-out-the-garbage.yml for a more complete configuration
+#
+# Users experiencing excessive failures may wish to detune the floor module sensitivity 
+# floor stat mode provides a sliding scale for cleanliness 
+# the default value is set to extremely clean 
+# this impacts the binary value floor.state = clean | dirty 
+# floor.state has a special value any to manage actions regardless of current state
+#
+# Please see: broom.py or README.md for a list of valid broom states.
+# Ansible broom module requires Quidditch 2.0 support
+#
+# Pull requests welcome
+# 
+
+- name: Determine kitchen floor state
+  floor:
+    mode: stat
+    room: "{{ clean_room }}"
+    sensitivity: motherinlaw
+  register: kitchen_res
+
+- name: Sweep the kitchen floor because I said so
+  sweep:
+    state: active 
+    mode: pronto
+    user: {{ item.name }}
+    day: {{ item.day }}
+  with_items:
+    - { name: {{ child1 }}, day: Monday, Wednesday, Friday }
+    - { name: {{ child2 }}, day: Sunday, Tuesday, Thursday }
+  when: "{{ kitchen_res.state }} is any"
+  register: kitchen_res
+
+# if scheduled child has swept the kitchen floor, 
+# enable their wifi and add an increment to their itunes allowance
+
+- name: Carrot Wifi
+  wifi:
+    state: enabled
+    access: granted
+    user: "{{ kitchen_res.cleaner.name }}"
+  when: "{{ kitchen_res.state }} is clean"
+
+- name: Carrot iTunes
+  itunes:
+    state: enabled
+    access: granted
+    user: "{{ kitchen_res.cleaner.name }}"
+    allowance: "{{ incrememnt }}"
+  when: "{{ kitchen_res.state }} is clean"
+
+# if scheduled child has not swept the kitchen floor, 
+# disable their wifi and reset their itunes allowance to 0
+
+- name: Stick Wifi
+  wifi:
+    state: enabled
+    access: suspended
+    user: "{{ kitchen_res.cleaner.name }}"
+    devices: all
+  when: "{{ kitchen_res.state }} is dirty"
+
+- name: Stick iTunes
+  itunes:
+    state: reset
+    access: suspended
+    user: "{{ kitchen_res.cleaner.name }}"
+    allowance: 0.00
+  when: "{{ kitchen_res.state }} is dirty"
+
+

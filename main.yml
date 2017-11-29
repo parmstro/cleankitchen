@@ -1,0 +1,21 @@
+# Paul Armstrong, 2017
+# parmstro@redhat.com
+# Please review README.md and LICENSE
+#
+# This project helps get the kids to clean the kitchen
+# Current roles: dishwasher, sweep
+#
+# Pull Requests are Welcome!
+#
+
+- name: Ensure the kitchen gets cleaned
+   hosts: kids
+   become: yes
+   become_user: dad
+   become_method: sudo
+
+   roles:
+   - dishwasher
+   - sweep
+   when: "{{ today }} != 'Saturday'"
+

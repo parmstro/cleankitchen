@@ -1,0 +1,14 @@
+kids:
+  child1: 
+    name: James
+    mail: james@ditchingclass.ca
+    wifiname: rabbit
+    itunes: wheresmybong@apple.ca
+
+  child2: 
+    name: Mairin
+    mail: barncat@ponyexpress.ca
+    wifiname: barncat
+    itunes: horsenut@apple.ca
+
+

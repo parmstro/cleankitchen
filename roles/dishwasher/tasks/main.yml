@@ -1,0 +1,71 @@
+---
+# Paul Armstrong
+# parmstro@redhat.com
+# Please see LICENSE for the applicable opensource license
+#
+# This play is designed to make your kids empty the dishwasher and sweep the kitchen floor
+# The play can be combined with take-out-the-garbage.yml for a more complete configuration
+# The clean-your-room.py module is in beta. We are experiencing an intractable issue with a 
+# race condition when text-your-friends or play-tunes are running
+# Please see: dishwasher.py or README.md for a list of valid dishwasher states.
+# Ansible dishwasher module requires device support for OpenDISH (Dishwasher Industry Source Hacking) API
+# Ansible broom module requires Quidditch 2.0 support
+# Pull requests welcome
+# 
+
+- name: Determine dishwasher state
+  dishwasher:
+    mode: stat
+  register: dishwasher_res
+
+- name: Empty the dishwasher pronto
+  dishwasher:
+    state: empty
+    mode: pronto
+    sensitivity: no_breakage
+    user: {{ item.name }}
+    day: {{ item.day }}
+  with_items:
+    - { name: {{ child1 }}, day: Sunday, Tuesday, Thursday }
+    - { name: {{ child2 }}, day: Monday, Wednesday, Friday }
+  when: "{{ dishwasher_res.state }} is loaded_clean"
+  register: dishwasher_res
+
+# if scheduled child has emptied a clean dishwasher, 
+# enable their wifi and add a dollar to their itunes allowance
+
+- name: Carrot Wifi
+  wifi:
+    state: enabled
+    access: granted
+    user: "{{ dishwasher_res.unloader.name }}"
+  when: "{{ dishwasher_res.state }} is unloaded_clean"
+
+- name: Carrot iTunes
+  itunes:
+    state: enabled
+    access: granted
+    user: "{{ dishwasher_res.unloader.name }}"
+    allowance: 1.00
+  when: "{{ dishwasher_res.state }} is unloaded_clean"
+
+# if scheduled child has not emptied a clean dishwasher, 
+# disable their wifi and reset their itunes allowance to 0
+
+- name: Stick Wifi
+  wifi:
+    state: enabled
+    access: suspended
+    user: "{{ dishwasher_res.unloader.name }}"
+    devices: all
+  when: "{{ dishwasher_res.state }} is loaded_clean"
+
+- name: Stick iTunes
+  itunes:
+    state: reset
+    access: suspended
+    user: "{{ dishwasher_res.unloader.name }}"
+    allowance: 0.00
+  when: "{{ dishwasher_res.state }} is loaded_clean"
+
+
