@@ -17,5 +17,5 @@
    roles:
    - dishwasher
    - sweep
-   when: "{{ today }} != 'Saturday'"
+when: "{{ today }} != 'Saturday'"
 
