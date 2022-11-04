@@ -1,3 +1,4 @@
+
 # Paul Armstrong, 2017
 # parmstro@redhat.com
 # Please review README.md and LICENSE
@@ -9,13 +10,13 @@
 #
 
 - name: Ensure the kitchen gets cleaned
-   hosts: kids
-   become: yes
-   become_user: dad
-   become_method: sudo
+  hosts: kids
+  become: yes
+  become_user: dad
+  become_method: sudo
 
-   roles:
+  roles:
    - dishwasher
    - sweep
-when: "{{ today }} != 'Saturday'"
+  when: "{{ today }} != 'Saturday'"
 
